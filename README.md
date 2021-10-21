@@ -20,4 +20,4 @@ git clone https://github.com/itschool-2021-infosec/zakat-online
 ### С Докером
 
 2. `docker-compose up`
-3. Перейдите по адресу: http://localhost:60123
+3. Перейдите по адресу: http://localhost:25505
