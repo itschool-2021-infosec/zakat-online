@@ -102,8 +102,10 @@ def login():
 
         cur = get_db().cursor()
         base_result = cur.execute(
-            "select username, password from users where username = ? and password = ?;",
-            (username, password)
+            f"""
+            select username, password from users
+            where username = '{username}' and password = '{password}';
+            """
         ).fetchone()
 
         if base_result is None:
