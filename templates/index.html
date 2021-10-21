@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <img src="https://k60.in/zakat.gif">
+    <h1>Добро пожаловать на Веб-сайт!</h1>
+    {% if not username %}
+      <h2>На данном Веб-сайте пользователи могут <a href="/register">регистрироваться</a>, <a href="/login">авторизовываться</a> и просто наблюдать закат:</h2>
+    {% else %}
+      <h2>Комментируйте закат, <code>{{username}}</code>:</h2>
+      <h6 style="margin-top: -1.75em">Если вы не {{username}}, вы <a href="/logout">выйдите</a>, ок?</h6>
+    {% endif %}
+    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.swflorida.travel%2Fwp-content%2Fuploads%2F2016%2F04%2FIMG_0133.jpg&f=1&nofb=1" height="340" alt="Закат">
+    <h3>Комментарии</h3>
+    {% if not comments %}
+      <em>Комментариев нет...</em>
+    {% else %}
+      {% for text, author, city in comments %}
+        <div class="comment" style="background: #9901; padding: 2px 10px; margin: 5px;">
+          <h6 style="margin: 1em 0 -1em">{{author}}, г. {{city}}</h6>
+          <p>{{text|safe}}</p> <!-- safe означает, что ввод не фильтруется! -->
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if username %}
+      <h5>Ваш комментарий</h5>
+      <form action="/comment" method="POST">
+        <p><textarea name="text" style="width: 40em; height: 10em"></textarea></p>
+        <p><input type="submit" value="Отправить комментарий"></p>
+      </form>
+    {% else %}
+      <h2>Авторизованные пользователи могут также комментировать закат. Спешите <a href="/register">регистрироваться!</a></h2>
+    {% endif %}
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <img src="https://k60.in/zakat.gif">
+    <h1>Авторизация на Веб-сайте</h1>
+    <form action="/login" method="POST">
+        <p>username: <input name="username"></p>
+        <p>password: <input name="password" type="password"></p>
+        <p><input type="submit" value="ok"></p>
+    </form>
+    {% if message %}
+      <div style="background: #f003">
+        <h5>Сообщение от Веб-сайта</h5>
+        <p>{{message}}</p>
+      </div>
+    {% endif %}
+  </body>
+</html>

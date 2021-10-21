@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <img src="https://k60.in/zakat.gif">
+    <h1>Регистрация на Веб-сайте</h1>
+    <p>Пожалуйста, <b>не вводите</b> свои настоящие <b>пароли</b> сюда! Это приложение дырявое как решето. Вас предупредили.</p>
+    <form action="/register" method="POST">
+        <p>username: <input name="username"></p>
+        <p>password: <input name="password" type="password"></p>
+        <p>city:
+          <select name="city">
+            {% for id, city_name in cities %}
+              <option value="{{id}}">{{city_name}}</option>
+            {% endfor %}
+          </select>
+        </p>
+        <p><small><em>Если вашего населённого пункта нет в списке, вы можете добавить его самостоятельно...</em></small></p>
+        <p><input type="submit" value="ok"></p>
+    </form>
+    {% if message %}
+      <div style="background: #f003">
+        <h5>Сообщение от Веб-сайта</h5>
+        <p>{{message}}</p>
+      </div>
+    {% endif %}
+  </body>
+</html>

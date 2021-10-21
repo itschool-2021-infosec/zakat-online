@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  zakat:
+    build: .
+    ports:
+      - "25505:5000"
+    expose:
+      - "25505"
