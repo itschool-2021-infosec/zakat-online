@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <button onclick="toggleTheme()">Переключить тему</button>
+    <img src="https://k60.in/zakat.gif">
+    <noscript>Включите JavaScript!</noscript>
+
+    <div id="header"></div>
+    <div id="comments"></div>
+
+    <form id="loginForm" onsubmit="submitLogin(event)">
+      <a onclick="closeForm(loginForm)">×</a>
+      <h3>Вход</h3>
+      <p>username: <input name="username"></p>
+      <p>password: <input name="password" type="password"></p>
+      <p><input type="submit" value="ok"></p>
+    </form>
+
+    <form id="registerForm" onsubmit="submitRegister(event)">
+      <a onclick="closeForm(registerForm)">×</a>
+      <h3>Регистрация</h3>
+      <p>username: <input name="username"></p>
+      <p>password: <input name="password" type="password"></p>
+      <p>city:
+        <select name="city" id="city">
+        </select>
+      </p>
+      <p><small><em>Если вашего населённого пункта нет в списке, вы можете добавить его самостоятельно...</em></small></p>
+      <p><input type="submit" value="ok"></p>
+    </form>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

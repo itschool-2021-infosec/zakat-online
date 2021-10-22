@@ -1,8 +1,10 @@
-from flask import Flask, request, session, redirect, render_template, g
+from flask import Flask, request, session, redirect, render_template, g, jsonify, make_response, url_for
 import sqlite3
 import random
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+app.config['SESSION_COOKIE_HTTPONLY'] = False
 app.secret_key = "secret123123123"
 
 # Заклинания для того, чтобы подключение к БД было глобальным,
@@ -26,8 +28,43 @@ def close_connection(exception):
 
 # Маршруты приложения:
 
+
 @app.route('/')
 def index():
+    return render_template('index-js.html')
+
+
+@app.route('/api/user')
+def user():
+    username = session.get('username')
+    if username:
+        cur = get_db().cursor()
+        base_result = cur.execute(
+            f"""
+            select cities.name from users
+            left join cities on cities.id = users.city
+            where username = '{username}';
+            """
+        ).fetchone()
+        city = base_result[0]
+    else:
+        city = False
+
+    return make_response(jsonify({
+        'username': session.get('username', False),
+        'city': city
+    }))
+
+
+@app.route('/api/zakat')
+def zakat():
+    return make_response(jsonify({
+        'url': url_for('static', filename='zakat.jpeg')
+    }))
+
+
+@app.route('/api/comments')
+def api_comments():
     cur = get_db().cursor()
 
     base_result = cur.execute(
@@ -38,22 +75,31 @@ def index():
         """
     ).fetchall()
 
-    return render_template(
-        'index.html',
-        comments = base_result,
-        username = session.get('username', None)
-    )
+    comments = []
+
+    for text, author, city in base_result:
+        comments.append({
+            'author': author,
+            'text': text,
+            'city': city
+        })
 
 
-@app.route('/comment', methods=["POST"])
+    return make_response(jsonify({
+        'comments': comments
+    }))
+
+
+@app.route('/api/comment', methods=["POST"])
 def comment():
     author = session['username']
     if author is None:
-        return "Вы сперва ВОЙДИТЕ, а затем только комментарии ОСТАВЛЯЙТЕ!"
+        return make_response(jsonify(
+            error="Вы сперва ВОЙДИТЕ, а затем только комментарии ОСТАВЛЯЙТЕ!"
+        ))
     else:
         cur = get_db().cursor()
-
-        form = request.form
+        form = request.get_json()
         text = form['text']
 
         user = cur.execute(
@@ -62,10 +108,13 @@ def comment():
 
         user_id = user[0]
 
-        cur.execute(f"insert into comments (text, author) values ('{text}', '{user_id}');")
+        cur.execute(
+            "insert into comments (text, author) values (?, ?);",
+            (text, user_id)
+        )
         get_db().commit()
 
-        return redirect('/')
+        return make_response(jsonify(ok='ok'))
 
 
 
@@ -91,12 +140,12 @@ def register():
         return render_template('register.html', message="Вы зарегистрированы. Теперь можно войти.")
 
 
-@app.route('/login', methods=["GET", "POST"])
+@app.route('/api/login', methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template('login.html')
     else:
-        form = request.form
+        form = request.get_json()
         username = form['username']
         password = form['password']
 
@@ -109,17 +158,19 @@ def login():
         ).fetchone()
 
         if base_result is None:
-            return render_template("login.html", message="Неверный пароль!")
+            return make_response(jsonify(error="Неверный пароль!"))
         else:
             base_username = base_result[0]
             session['username'] = base_username
-            return redirect('/')
+            return make_response(jsonify(ok="ok"))
 
 
-@app.route('/logout')
+@app.route('/api/logout')
 def logout():
     del session['username']
-    return redirect('/')
+    return make_response(jsonify({
+        'ok': 'ok'
+    }))
 
 
 app.run(debug=True, host="0.0.0.0")
